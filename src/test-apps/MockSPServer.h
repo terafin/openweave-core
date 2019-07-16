@@ -1,5 +1,6 @@
 /*
  *
+ *    Copyright (c) 2020 Google LLC.
  *    Copyright (c) 2013-2017 Nest Labs, Inc.
  *    All rights reserved.
  *
@@ -28,6 +29,7 @@
 #ifndef MOCKSPSERVER_H_
 #define MOCKSPSERVER_H_
 
+#include "MockCPClient.h"
 #include <Weave/Core/WeaveCore.h>
 #include <Weave/Profiles/service-provisioning/ServiceProvisioning.h>
 
@@ -74,6 +76,7 @@ private:
     uint16_t mPersistedServiceConfigLen;
     nl::Weave::WeaveConnection *mPairingServerCon;
     nl::Weave::Binding *mPairingServerBinding;
+    // MockCertificateProvisioningClient * mMockCPClient;
 
     WEAVE_ERROR PersistNewService(uint64_t serviceId,
                                   const char *accountId, uint16_t accountIdLen,
@@ -87,10 +90,16 @@ private:
     static void HandlePairingServerConnectionComplete(nl::Weave::WeaveConnection *con, WEAVE_ERROR conErr);
     static void HandlePairingServerConnectionClosed(nl::Weave::WeaveConnection *con, WEAVE_ERROR conErr);
 
+    WEAVE_ERROR StartPairDeviceToAccount(void);
     WEAVE_ERROR PrepareBindingForPairingServer();
     static void HandlePairingServerBindingEvent(void *const appState, const nl::Weave::Binding::EventType event,
                                                 const nl::Weave::Binding::InEventParam &inParam,
                                                 nl::Weave::Binding::OutEventParam &outParam);
+
+    // WEAVE_ERROR StartCertificateProvisioning(void);
+    static WEAVE_ERROR EncodeGetCertificateRequestAuthInfo(void *const appState, TLVWriter &writer);
+    static void HandleCertificateProvisioningResult(void *const appState, WEAVE_ERROR localErr,
+                                                    uint32_t statusProfileId, uint16_t statusCode);
 };
 
 #endif /* MOCKSPSERVER_H_ */

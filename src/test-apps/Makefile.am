@@ -1,5 +1,5 @@
 #
-#    Copyright (c) 2018-2019 Google LLC
+#    Copyright (c) 2018-2020 Google LLC
 #    Copyright (c) 2014-2018 Nest Labs, Inc.
 #    All rights reserved.
 #
@@ -84,6 +84,7 @@ noinst_HEADERS                                             = \
     DMTestClient.h                                           \
     DeviceDescOptions.h                                      \
     KeyExportOptions.h                                       \
+    MockCPClient.h                                           \
     MockDCLPServer.h                                         \
     MockDCServer.h                                           \
     MockDDServer.h                                           \
@@ -115,9 +116,10 @@ noinst_HEADERS                                             = \
     MockWdmTestVerifier.h                                    \
     MockWdmViewClient.h                                      \
     MockWdmViewServer.h                                      \
+    MockWOCAServer.h                                         \
     PASEEngineTest.h                                         \
     TAKEOptions.h                                            \
-    TapAddrAutoconf.h                                               \
+    TapAddrAutoconf.h                                        \
     TestDRBG.h                                               \
     TestEventLoggingSchemaExamples.h                         \
     TestGroupKeyStore.h                                      \
@@ -1417,7 +1419,7 @@ TestWdmNext_SOURCES                      = TestWdmNext.cpp						\
                                            schema/weave/trait/locale/LocaleCapabilitiesTrait.cpp	\
                                            schema/weave/trait/security/BoltLockSettingsTrait.cpp	\
                                            schema/weave/trait/telemetry/NetworkWiFiTelemetryTrait.cpp	\
-										   MockWdmNodeOptions.cpp                   \
+                                           MockWdmNodeOptions.cpp                                       \
                                            MockWdmViewServer.cpp					\
                                            MockWdmViewClient.cpp					\
                                            MockWdmSubscriptionInitiator.cpp				\
@@ -1457,6 +1459,7 @@ infratest_SOURCES                        = infratest.cpp
 infratest_LDADD                          = $(COMMON_LDADD)
 
 mock_device_SOURCES                      = mock-device.cpp                                          \
+                                           MockCPClient.cpp                                         \
                                            MockDCLPServer.cpp                                       \
                                            MockDCServer.cpp                                         \
                                            MockDDServer.cpp                                         \
@@ -1470,6 +1473,7 @@ mock_device_SOURCES                      = mock-device.cpp                      
                                            MockTimeSyncCoordinator.cpp                              \
                                            MockTimeSyncUtil.cpp                                     \
                                            MockTokenPairingServer.cpp                               \
+                                           MockWOCAServer.cpp                                       \
                                            MockSinkTraits.cpp                                       \
                                            MockSourceTraits.cpp                                     \
                                            schema/nest/test/trait/TestATrait.cpp                    \
@@ -1485,9 +1489,10 @@ mock_device_SOURCES                      = mock-device.cpp                      
                                            MockWdmSubscriptionInitiator.cpp                         \
                                            MockWdmTestVerifier.cpp	                            \
                                            MockWdmSubscriptionResponder.cpp                         \
-										   MockWdmNodeOptions.cpp                                   \
+                                           MockWdmNodeOptions.cpp                                   \
                                            MockLoggingManager.cpp                                   \
-                                           MockEvents.cpp
+                                           MockEvents.cpp                                           \
+                                           TestWeaveCertData.cpp
 
 if WEAVE_BUILD_LEGACY_WDM
 mock_device_SOURCES                      += \

@@ -1,5 +1,6 @@
 /*
  *
+ *    Copyright (c) 2020 Google LLC.
  *    Copyright (c) 2013-2017 Nest Labs, Inc.
  *    All rights reserved.
  *
@@ -54,6 +55,7 @@
 #include <Weave/Profiles/service-directory/ServiceDirectory.h>
 #include <Weave/Profiles/heartbeat/WeaveHeartbeat.h>
 #include <Weave/Support/crypto/WeaveCrypto.h>
+#include "MockCPClient.h"
 #include "MockDCLPServer.h"
 #include "MockNPServer.h"
 #include "MockSPServer.h"
@@ -65,6 +67,7 @@
 #include "MockTokenPairingServer.h"
 #include "MockWdmViewClient.h"
 #include "MockWdmViewServer.h"
+#include "MockWOCAServer.h"
 
 #include "MockWdmSubscriptionInitiator.h"
 #include "MockWdmSubscriptionResponder.h"
@@ -165,11 +168,13 @@ WeaveHeartbeatReceiver HeartbeatReceiver;
 MockNetworkProvisioningServer MockNPServer;
 MockDropcamLegacyPairingServer MockDCLPServer;
 MockServiceProvisioningServer MockSPServer;
+MockCertificateProvisioningClient MockCPClient;
 MockFabricProvisioningServer MockFPServer;
 MockPairingServer MockPairingEPServer;
 MockDeviceDescriptionServer MockDDServer;
 MockDeviceControlServer MockDCServer;
 MockTokenPairingServer MockTPServer;
+MockWeaveOperationalCAServer MockWOCAServer;
 
 #if WEAVE_CONFIG_TIME
 MockTimeSync MockTimeNode;
@@ -193,6 +198,11 @@ const char *PairingServer = NULL;
 
 uint64_t PairingEndPointIdArg = kServiceEndpoint_ServiceProvisioning;
 int PairingTransportArg = kPairingTransport_TCP;
+
+const char *WOCAServer = NULL;
+
+uint64_t WOCAServerEndPointIdArg = kServiceEndpoint_DeviceOperationalCA;
+int WOCAServerTransportArg = kPairingTransport_TCP;
 
 #define TOOL_NAME "mock-device"
 
@@ -614,6 +624,16 @@ int main(int argc, char *argv[])
         MockSPServer.PairingServerAddr = PairingServer;
     }
 
+    // Initialize the mock certificate provisioning client
+    err = MockCPClient.Init(&ExchangeMgr);
+    FAIL_ERROR(err, "MockCertificateProvisioningClient.Init failed");
+    MockCPClient.WOCAServerTransport = PairingTransportArg;
+    MockCPClient.WOCAServerEndPointId = WOCAServerEndPointIdArg;
+    if (WOCAServer != NULL)
+    {
+        MockCPClient.WOCAServerAddr = WOCAServer;
+    }
+
     // Initialize the mock fabric provisioning server
     err = MockFPServer.Init(&ExchangeMgr);
     FAIL_ERROR(err, "MockFabricProvisioningServer.Init failed");
@@ -633,6 +653,10 @@ int main(int argc, char *argv[])
     // Initialize the mock token pairing server.
     err = MockTPServer.Init(&ExchangeMgr);
     FAIL_ERROR(err, "MockTPServer.Init failed");
+
+    // Initialize the mock Weave operational certificate authority server.
+    err = MockWOCAServer.Init(&ExchangeMgr);
+    FAIL_ERROR(err, "MockWOCAServer.Init failed");
 
 
     InitializeEventLogging(&ExchangeMgr);
@@ -687,11 +711,13 @@ int main(int argc, char *argv[])
         MockNPServer.Preconfig();
         MockFPServer.Preconfig();
         MockSPServer.Preconfig();
+        MockCPClient.Preconfig();
     }
 
     PrintNodeConfig();
 
     printf("  Pairing Server: %s\n", MockSPServer.PairingServerAddr);
+    printf("  WOCA Server: %s\n", MockCPClient.WOCAServerAddr);
 
     // If instructed to initiate a connection to a remote address, arm a timer that will
     // fire as soon as we enter the network service loop.
@@ -804,6 +830,8 @@ int main(int argc, char *argv[])
     MockPairingEPServer.Shutdown();
     MockTPServer.Shutdown();
     MockSPServer.Shutdown();
+    MockCPClient.Shutdown();
+    MockWOCAServer.Shutdown();
 #if WEAVE_CONFIG_LEGACY_WDM
     MockDMPublisher.Finalize();
 #endif

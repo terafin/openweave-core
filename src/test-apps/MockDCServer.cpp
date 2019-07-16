@@ -33,6 +33,7 @@
 #include "MockDCServer.h"
 #include "MockNPServer.h"
 #include "MockSPServer.h"
+#include "MockCPClient.h"
 #include <Weave/Support/CodeUtils.h>
 #include <Weave/Core/WeaveTLV.h>
 #include <Weave/Profiles/WeaveProfiles.h>
@@ -46,6 +47,7 @@ using namespace nl::Weave::Profiles::DeviceControl;
 
 extern MockNetworkProvisioningServer MockNPServer;
 extern MockServiceProvisioningServer MockSPServer;
+extern MockCertificateProvisioningClient MockCPClient;
 
 MockDeviceControlServer::MockDeviceControlServer()
 {
@@ -79,7 +81,7 @@ WEAVE_ERROR MockDeviceControlServer::OnResetConfig(uint16_t resetFlags)
 {
     printf("Resetting configuration...\n");
 
-    if (resetFlags & kResetConfigFlag_ServiceConfig)
+    if (resetFlags & kResetConfigFlag_ServiceConfig || resetFlags & kResetConfigFlag_OperationalCredentials)
     {
         printf("  Resetting service configuration\n");
         MockSPServer.Reset();
@@ -95,6 +97,12 @@ WEAVE_ERROR MockDeviceControlServer::OnResetConfig(uint16_t resetFlags)
     {
         printf("  Resetting network configuration\n");
         MockNPServer.Reset();
+    }
+
+    if (resetFlags & kResetConfigFlag_OperationalCredentials)
+    {
+        printf("  Resetting operational device credentials\n");
+        MockCPClient.Reset();
     }
 
     return WEAVE_NO_ERROR;

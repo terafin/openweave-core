@@ -29,10 +29,11 @@
 
 export CASE=1
 export USE_SERVICE_DIR=1
-export weave_service_address='frontdoor.qa.nestlabs.com'
+#export weave_service_address='frontdoor.qa.nestlabs.com'
+export weave_service_address='aclu.unstable.nestlabs.com'
 export happy_dns='8.8.8.8 172.16.255.1 172.16.255.153 172.16.255.53'
 export RESOURCE_IDS='thd1'
-export FABRIC_SEED='00001'
+export FABRIC_SEED='016B1'
 export DEVICE_NUMBERS=1
 
 # exit if something fails
@@ -40,8 +41,10 @@ set -e
 
 if [[ $# -eq 0 ]]
 then
+#    tunnel/test_weave_tunnel_02.py
     pairing/test_weave_pairing_01.py
     wdmNext/test_weave_wdm_next_service_mutual_subscribe_01.py
+
 else
     for test_to_run in $* ; do python $test_to_run ;  done
 fi
