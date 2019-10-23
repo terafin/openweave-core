@@ -502,7 +502,8 @@ class DeviceMgrCmd(Cmd):
             print str(ex)
             return
 
-        print "Connected to device."
+        print "Connected to device %X at %s" % (self.devMgr.DeviceId(), self.devMgr.DeviceAddress())
+
     def do_blediagtest(self, line):
         """
         ble-diag-test [ <options> ]
@@ -904,7 +905,6 @@ class DeviceMgrCmd(Cmd):
             return
 
         print "Connected to device %X at %s" % (self.devMgr.DeviceId(), self.devMgr.DeviceAddress())
-        print "done"
 
     def do_remotepassiverendezvous(self, line):
         """
