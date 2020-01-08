@@ -125,7 +125,8 @@ public:
     bool IsMemberOfFabric();
     bool IsFullyProvisioned();
 #if WEAVE_DEVICE_CONFIG_ENABLE_JUST_IN_TIME_PROVISIONING
-    bool OperationalDeviceCredentialsProvisioned();
+    bool OperationalDeviceIdProvisioned(void);
+    bool OperationalDeviceCertAndPrivateKeyProvisioned(void);
 #endif
 
     void InitiateFactoryReset();
@@ -155,7 +156,8 @@ private:
     WEAVE_ERROR ReadPersistedStorageValue(::nl::Weave::Platform::PersistedStorage::Key key, uint32_t & value);
     WEAVE_ERROR WritePersistedStorageValue(::nl::Weave::Platform::PersistedStorage::Key key, uint32_t value);
 #if WEAVE_DEVICE_CONFIG_ENABLE_JUST_IN_TIME_PROVISIONING
-    WEAVE_ERROR ClearOperationalDeviceCredentials(void);
+    WEAVE_ERROR GenerateAndStoreOperationalDeviceId(void);
+    WEAVE_ERROR GenerateAndStoreOperationalDeviceCertAndPrivateKey(void);
     void UseManufacturerCredentialsAsOperational(bool val);
 #endif
 
@@ -521,14 +523,24 @@ inline WEAVE_ERROR ConfigurationManager::SetFailSafeArmed(bool val)
 
 #if WEAVE_DEVICE_CONFIG_ENABLE_JUST_IN_TIME_PROVISIONING
 
-inline bool ConfigurationManager::OperationalDeviceCredentialsProvisioned()
+inline bool ConfigurationManager::OperationalDeviceIdProvisioned()
 {
-    return static_cast<ImplClass*>(this)->_OperationalDeviceCredentialsProvisioned();
+    return static_cast<ImplClass*>(this)->_OperationalDeviceIdProvisioned();
 }
 
-inline WEAVE_ERROR ConfigurationManager::ClearOperationalDeviceCredentials(void)
+inline bool ConfigurationManager::OperationalDeviceCertAndPrivateKeyProvisioned()
 {
-    return static_cast<ImplClass*>(this)->_ClearOperationalDeviceCredentials();
+    return static_cast<ImplClass*>(this)->_OperationalDeviceCertAndPrivateKeyProvisioned();
+}
+
+inline WEAVE_ERROR ConfigurationManager::GenerateAndStoreOperationalDeviceId(void)
+{
+    return static_cast<ImplClass*>(this)->_GenerateAndStoreOperationalDeviceId();
+}
+
+inline WEAVE_ERROR ConfigurationManager::GenerateAndStoreOperationalDeviceCertAndPrivateKey(void)
+{
+    return static_cast<ImplClass*>(this)->_GenerateAndStoreOperationalDeviceCertAndPrivateKey();
 }
 
 inline void ConfigurationManager::UseManufacturerCredentialsAsOperational(bool val)

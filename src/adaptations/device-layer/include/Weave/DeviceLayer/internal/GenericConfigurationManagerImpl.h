@@ -75,7 +75,6 @@ public:
     WEAVE_ERROR _StoreDeviceCertificate(const uint8_t * cert, size_t certLen);
     WEAVE_ERROR _StoreDeviceIntermediateCACerts(const uint8_t * certs, size_t certsLen);
     WEAVE_ERROR _StoreDevicePrivateKey(const uint8_t * key, size_t keyLen);
-    WEAVE_ERROR _ClearOperationalDeviceCredentials(void);
 #endif
     WEAVE_ERROR _GetManufacturerDeviceId(uint64_t & deviceId);
     WEAVE_ERROR _StoreManufacturerDeviceId(uint64_t deviceId);
@@ -110,7 +109,10 @@ public:
     bool _IsFullyProvisioned();
     WEAVE_ERROR _ComputeProvisioningHash(uint8_t * hashBuf, size_t hashBufSize);
 #if WEAVE_DEVICE_CONFIG_ENABLE_JUST_IN_TIME_PROVISIONING
-    bool _OperationalDeviceCredentialsProvisioned();
+    WEAVE_ERROR _GenerateAndStoreOperationalDeviceId(void);
+    WEAVE_ERROR _GenerateAndStoreOperationalDeviceCertAndPrivateKey(void);
+    bool _OperationalDeviceIdProvisioned(void);
+    bool _OperationalDeviceCertAndPrivateKeyProvisioned(void);
     void _UseManufacturerCredentialsAsOperational(bool val);
 #endif
 
@@ -121,8 +123,7 @@ protected:
         kFlag_IsServiceProvisioned                    = 0x01,
         kFlag_IsMemberOfFabric                        = 0x02,
         kFlag_IsPairedToAccount                       = 0x04,
-        kFlag_OperationalDeviceCredentialsProvisioned = 0x08,
-        kFlag_UseManufacturerCredentialsAsOperational = 0x10,
+        kFlag_UseManufacturerCredentialsAsOperational = 0x08,
     };
 
     uint8_t mFlags;

@@ -118,15 +118,15 @@ WEAVE_ERROR DeviceControlServer::OnResetConfig(uint16_t resetFlags)
         }
 
 #if WEAVE_DEVICE_CONFIG_ENABLE_JUST_IN_TIME_PROVISIONING
-        // If the device operational credentials reset has been requested, clear
-        // the device operational credentials, if present.
+        // If the operational device credentials reset has been requested, clear
+        // and generate new operational device certificate and private key.
         if ((resetFlags & kResetConfigFlag_OperationalCredentials) != 0)
         {
-            WeaveLogProgress(DeviceLayer, "Reset operational credentials");
-            tmpErr = ConfigurationMgr().ClearOperationalDeviceCredentials();
+            WeaveLogProgress(DeviceLayer, "Reset operational device certificate and private key");
+            tmpErr = ConfigurationMgr().GenerateAndStoreOperationalDeviceCertAndPrivateKey();
             if (tmpErr != WEAVE_NO_ERROR)
             {
-                WeaveLogProgress(DeviceLayer, "ConfigurationMgr().ClearOperationalDeviceCredentials() failed: %s", ErrorStr(tmpErr));
+                WeaveLogProgress(DeviceLayer, "ConfigurationMgr().GenerateAndStoreOperationalDeviceCertAndPrivateKey() failed: %s", ErrorStr(tmpErr));
                 err = (err == WEAVE_NO_ERROR) ? tmpErr : err;
             }
         }
